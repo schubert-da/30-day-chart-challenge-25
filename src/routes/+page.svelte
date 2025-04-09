@@ -9,5 +9,6 @@
 <style>
 	main {
 		padding: 3rem;
+		background-color: #efefef;
 	}
 </style>

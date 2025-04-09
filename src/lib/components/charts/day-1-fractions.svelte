@@ -46,7 +46,7 @@
 				opacity: 1,
 				scaleY: 1,
 				scaleX: 1,
-				duration: 0.35,
+				duration: 0.45,
 				ease: 'power2.in'
 			}
 		);
@@ -57,7 +57,7 @@
 		}
 	}
 
-	function handleMouseLeave(event) {
+	function reverseHoverAnimation(event) {
 		const barContentElements = event.target.querySelector('.bar-content');
 		gsap.to(barContentElements, {
 			opacity: 0,
@@ -68,7 +68,7 @@
 </script>
 
 <div
-	class="viz-container mx-20 flex h-150 w-[850px] flex-row gap-8 bg-gray-800 px-[32px] py-8 text-gray-50"
+	class="viz-container mx-20 flex h-150 w-[800px] flex-row gap-8 bg-gray-800 px-[32px] py-8 text-gray-50"
 >
 	<div class="chart-container w-[33%]">
 		<div class="chart h-full w-50 divide-y divide-gray-200 border-2 border-gray-200">
@@ -81,7 +81,7 @@
 						on:mouseenter={(evt) => {
 							playHoverAnimation(evt, row.height);
 						}}
-						on:mouseleave={handleMouseLeave}
+						on:mouseleave={reverseHoverAnimation}
 					>
 						<h3 class="title pointer-events-none relative z-20 text-[32px] uppercase">
 							{row.name}
