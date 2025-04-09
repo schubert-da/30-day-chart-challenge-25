@@ -1,9 +1,10 @@
 <script>
-	import FractionsChart from '$lib/components/charts/day-1-fractions.svelte';
+	import FractionsChart from '$lib/components/charts/day-01-fractions.svelte';
+	import BigOrSmall from '$lib/components/charts/day-04-big-or-small.svelte';
 </script>
 
 <main>
-	<FractionsChart></FractionsChart>
+	<BigOrSmall></BigOrSmall>
 </main>
 
 <style>
