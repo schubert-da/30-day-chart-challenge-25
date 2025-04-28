@@ -3,10 +3,11 @@
 	import BigOrSmall from '$lib/components/charts/day-04-big-or-small.svelte';
 	import Ranking from '$lib/components/charts/day-05-ranking.svelte';
 	import Stripes from '$lib/components/charts/day-11-stripes.svelte';
+	import Complicated from '$lib/components/charts/day-15-complicated.svelte';
 </script>
 
 <main>
-	<Stripes></Stripes>
+	<Complicated></Complicated>
 </main>
 
 <style>
