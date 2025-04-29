@@ -8,8 +8,6 @@
 		const script = document.createElement('script');
 		script.src = 'https://assets.codepen.io/16327/MorphSVGPlugin3.min.js'; // your trial URL
 		script.onload = () => {
-			console.log('MorphSVGPlugin loaded!');
-
 			// Now you can register the plugin
 			gsap.registerPlugin(MorphSVGPlugin);
 		};
@@ -19,30 +17,89 @@
 	const paletteColors = ['#2C564F', '#93B4B5', '#E1E4E3', '#D4B2A9', '#694E50'];
 	const colorScale = d3.scaleQuantize().domain([0, 100]).range(paletteColors);
 
-	function hoverPath(event, path) {
+	function hoverPath(event, index) {
 		const targetElement = event.target;
+		d3.select(paths[index].parentNode).raise();
+
+		paths.forEach((path, i) => {
+			if (i !== index) {
+				gsap.to(path, {
+					opacity: 0.5,
+					duration: 0.5,
+					ease: 'power2.Out'
+				});
+			} else {
+				gsap.to(path, {
+					opacity: 1,
+					duration: 0.5,
+					ease: 'power2.Out'
+				});
+			}
+		});
 
 		const centroid = [targetElement.dataset.centroidX, targetElement.dataset.centroidY];
-		console.log('centroid', centroid);
 
-		const rectWidth = 100;
-		const rectHeight = 50;
+		const rectWidth = 50;
+		const rectHeight = 35;
 
 		const x1 = centroid[0] - rectWidth / 2;
 		const y1 = centroid[1] - rectHeight / 2;
 		const x2 = centroid[0] + rectWidth / 2;
 		const y2 = centroid[1] + rectHeight / 2;
+		const rx = 4;
+		const ry = 4;
 
 		gsap.to(targetElement, {
 			duration: 0.8,
 			morphSVG: {
-				shape: `M${x1},${y1} 
-				L${x1 + rectWidth}, ${y1} 
-				L${x1 + rectWidth},${y1 + rectHeight} 
-				L${x1},${y1 + rectHeight} Z`
+				shape: `
+				M${x1 + rx},${y1}
+				H${x1 + rectWidth - rx}
+				A${rx},${ry} 0 0 1 ${x1 + rectWidth},${y1 + ry}
+				V${y1 + rectHeight - ry}
+				A${rx},${ry} 0 0 1 ${x1 + rectWidth - rx},${y1 + rectHeight}
+				H${x1 + rx}
+				A${rx},${ry} 0 0 1 ${x1},${y1 + rectHeight - ry}
+				V${y1 + ry}
+				A${rx},${ry} 0 0 1 ${x1 + rx},${y1}
+				Z`
 			},
 			ease: 'power2.Out'
 		});
+
+		gsap.to(targetElement.parentNode.querySelector('g.path-text'), {
+			opacity: 1,
+			duration: 0.5,
+			delay: 0.2,
+			ease: 'power2.Out'
+		});
+	}
+
+	function leavePath(event, index) {
+		const targetElement = event.target;
+		const originalPath = data[index].path;
+
+		paths.forEach((path, i) => {
+			gsap.to(path, {
+				opacity: 1,
+				duration: 0.5,
+				ease: 'power2.Out'
+			});
+		});
+
+		gsap.to(targetElement, {
+			duration: 0.8,
+			morphSVG: originalPath,
+			ease: 'power2.Out'
+		});
+
+		setTimeout(() => {
+			gsap.to(targetElement.parentNode.querySelector('g.path-text'), {
+				opacity: 0,
+				duration: 0.4,
+				ease: 'power2.Out'
+			});
+		}, 500);
 	}
 
 	function getCentroids(pathEl) {
@@ -115,19 +172,53 @@
 	<div class="svg-container w-2/3">
 		<svg viewBox="0 0 173 168" fill="none" xmlns="http://www.w3.org/2000/svg">
 			{#each data as d, index}
+				{@const centroid = getCentroids(paths[index])}
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
-				<path
-					stroke-width="0.5"
-					stroke="#ccc"
-					fill={colorScale(d.value)}
-					d={d.path}
-					bind:this={paths[index]}
-					data-centroid-x={getCentroids(paths[index])?.[0]}
-					data-centroid-y={getCentroids(paths[index])?.[1]}
-					on:mousemove={(e) => {
-						hoverPath(e, d.path);
-					}}
-				/>
+				<g class="path-group">
+					<path
+						stroke-width="0.5"
+						stroke="#ccc"
+						fill={colorScale(d.value)}
+						d={d.path}
+						bind:this={paths[index]}
+						data-centroid-x={centroid?.[0]}
+						data-centroid-y={centroid?.[1]}
+						on:mousemove={(e) => {
+							hoverPath(e, index);
+						}}
+						on:mouseleave={(e) => {
+							leavePath(e, index);
+						}}
+					/>
+
+					{#if centroid}
+						<g class="path-text opacity-0">
+							<text
+								x={centroid?.[0]}
+								y={centroid?.[1]}
+								class="font-body pointer-events-none fill-[#efefef] stroke-[#efefef] stroke-[0.35] text-[0.5rem] uppercase"
+								dy="-0.4rem"
+								text-anchor="middle">District {index + 1}</text
+							>
+
+							<line
+								x1={centroid?.[0] - 25}
+								y1={centroid?.[1] - 3}
+								x2={centroid?.[0] + 25}
+								y2={centroid?.[1] - 3}
+								class="pointer-events-none stroke-[#efefef] stroke-[0.5px]"
+							/>
+
+							<text
+								x={centroid?.[0]}
+								y={centroid?.[1]}
+								class="font-body pointer-events-none fill-[#efefef] text-[1rem]"
+								dy="0.8rem"
+								text-anchor="middle">{d.value}</text
+							>
+						</g>
+					{/if}
+				</g>
 			{/each}
 		</svg>
 	</div>
