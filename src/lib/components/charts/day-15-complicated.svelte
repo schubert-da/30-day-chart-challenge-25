@@ -237,8 +237,16 @@
 								x={centroid?.[0]}
 								y={centroid?.[1]}
 								class="font-body pointer-events-none fill-[#efefef] text-[1rem]"
+								dx="-0.1rem"
 								dy="0.8rem"
-								text-anchor="middle">{d.value}</text
+								text-anchor="end">{d.value}</text
+							>
+							<text
+								x={centroid?.[0]}
+								y={centroid?.[1]}
+								class="font-body pointer-events-none fill-[#efefef] text-[0.5rem]"
+								dy="0.75rem"
+								text-anchor="start">km</text
 							>
 						</g>
 					{/if}
