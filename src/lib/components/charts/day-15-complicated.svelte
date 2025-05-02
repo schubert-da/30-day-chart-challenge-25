@@ -179,9 +179,10 @@
 	<div class="text-content mt-20 w-1/3">
 		<h2 class="title font-display mb-2 text-[2.5rem]">Some insights I made up</h2>
 		<p class="font-body mb-8 max-w-[30ch] text-[1.125rem] leading-[1.5]">
-			When asked about their process, people inexperienced at working with data tend to <strong
-				>ask the same five questions:</strong
-			> What is this data? How was it collected? Who are you? How did you get into my house? Gandalf?
+			The map presents how far, in miles, a chicken joke must travel before achieving peak
+			existential impact. Coastal regions average 23 miles, likely due to a <strong
+				>shortage of metaphorical crosswalks</strong
+			>
 		</p>
 
 		<span class="legend-label mb-[6px] block font-medium uppercase"> Legend </span>
@@ -246,7 +247,7 @@
 								y={centroid?.[1]}
 								class="font-body pointer-events-none fill-[#efefef] text-[0.5rem]"
 								dy="0.75rem"
-								text-anchor="start">km</text
+								text-anchor="start">miles</text
 							>
 						</g>
 					{/if}
