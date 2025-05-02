@@ -50,7 +50,7 @@
 		const ry = 4;
 
 		gsap.to(targetElement, {
-			duration: 0.8,
+			duration: 0.5,
 			morphSVG: {
 				shape: `
 				M${x1 + rx},${y1}
@@ -79,27 +79,48 @@
 		const targetElement = event.target;
 		const originalPath = data[index].path;
 
+		const leaveTimeline = gsap.timeline({
+			paused: true,
+			onComplete: () => {
+				leaveTimeline.kill();
+			}
+		});
+
 		paths.forEach((path, i) => {
-			gsap.to(path, {
-				opacity: 1,
-				duration: 0.5,
+			leaveTimeline.to(
+				path,
+				{
+					opacity: 1,
+					duration: 0.5,
+					ease: 'power2.Out'
+				},
+				`<`
+			);
+		});
+
+		leaveTimeline.to(
+			targetElement,
+			{
+				duration: 0.8,
+				morphSVG: originalPath,
 				ease: 'power2.Out'
-			});
-		});
+			},
+			'<'
+		);
 
-		gsap.to(targetElement, {
-			duration: 0.8,
-			morphSVG: originalPath,
-			ease: 'power2.Out'
-		});
-
-		setTimeout(() => {
-			gsap.to(targetElement.parentNode.querySelector('g.path-text'), {
+		leaveTimeline.to(
+			targetElement.parentNode.querySelector('g.path-text'),
+			{
 				opacity: 0,
 				duration: 0.4,
 				ease: 'power2.Out'
-			});
-		}, 500);
+			},
+			'<0.5'
+		);
+
+		leaveTimeline;
+
+		leaveTimeline.restart();
 	}
 
 	function getCentroids(pathEl) {
@@ -163,12 +184,15 @@
 			> What is this data? How was it collected? Who are you? How did you get into my house? Gandalf?
 		</p>
 
+		<span class="legend-label mb-[6px] block font-medium uppercase"> Legend </span>
+
 		<div class="legend flex w-full flex-row items-center justify-start gap-[2px]">
 			{#each paletteColors as colour}
 				<div class="h-8 w-8" style="background-color: {colour}"></div>
 			{/each}
 		</div>
 	</div>
+
 	<div class="svg-container w-2/3">
 		<svg viewBox="0 0 173 168" fill="none" xmlns="http://www.w3.org/2000/svg">
 			{#each data as d, index}
